@@ -1,0 +1,92 @@
+@font-face {
+  font-family: regularFont;
+  src: url(./Formula1-Regular.ttf);
+}
+
+* {
+  margin: 0;
+  font-family: regularFont;
+}
+
+.header {
+  padding-top: 20px;
+  padding-bottom: 15px;
+  text-align: center;
+  background-color: #FF1E00;
+  color: white;
+}
+
+.content {
+  display: flex;
+}
+
+.content .driver1,
+.content .driver2 {
+  flex: 1;
+  max-width: 50%;
+}
+
+.content .driver1 .image1 img,
+.content .driver2 .image2 img {
+  max-width: 80%;
+}
+
+.footer {
+  background-color: #15151E;
+  color: white;
+  padding: 15px;
+  font-size: x-small;
+}
+
+.footer a {
+  color: #FF1E00;
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 200px;
+  position: relative;
+  align-self: center;
+}
+
+.dropdown .optionsDropdown {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.dropdown .optionsDropdown.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown .optionsDropdown button {
+  display: flex;
+  justify-content: space-between;
+  text-align: start;
+  cursor: pointer;
+}
+
+.dropdown .optionsDropdown button:hover {
+  background-color: grey;
+}
+
+.telemetryPlot img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.positionPlot img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
