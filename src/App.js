@@ -31,6 +31,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const [trending, setTrending] = useState([]);
+
   const handleYearSelect = async (e) => {
     setYear(e);
     axios.get(baseUrl + `races/${e}/`, { withCredentials: true })
@@ -119,10 +121,17 @@ function App() {
       });;
   }
 
+  const applyTrending = (d1, d2) => {
+    setDriver1(d1);
+    setDriver2(d2);
+    // Optional: You could even auto-trigger the fetch if you wanted
+    handleLapsButton();
+  };
+
   useEffect(() => {
     // Check if the user is logged in by hitting a simple endpoint
     // withCredentials ensures the browser sends the session cookie
-    axios.get('http://127.0.0.1:8000/api/selections/', { withCredentials: true })
+    axios.get('http://127.0.0.1:8000/api/popular/', { withCredentials: true })
       .then(() => {
         setIsAuthenticated(true);
         setLoading(false);
@@ -131,6 +140,17 @@ function App() {
         setIsAuthenticated(false);
         setLoading(false);
       });
+  }, []);
+
+  useEffect(() => {
+    // Use 127.0.0.1 to match your auth/CORS settings
+    axios.get('http://127.0.0.1:8000/api/popular/', { withCredentials: true })
+      .then(response => {
+        // response.data looks like: 
+        // [{driver1: 'HAM', driver2: 'VER', count: 150}, {driver1: 'NOR', driver2: 'PIA', count: 120}]
+        setTrending(response.data);
+      })
+      .catch(err => console.error("Could not fetch trending stats", err));
   }, []);
 
   if (loading) return <div>Loading...</div>;
@@ -148,6 +168,30 @@ function App() {
 
       <div className='intro'>
         <p>Welcome to F1 Driver Comparison! With this app, you can compare two drivers head-to-head with past statistics and telemetry data.</p>
+      </div>
+
+      <div className="trending-section" style={{ marginTop: '20px', textAlign: 'center' }}>
+        <h3>🔥 Trending Comparisons</h3>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {trending.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => applyTrending(item.driver1, item.driver2)}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#ff1801', // F1 Red
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '0.9rem'
+              }}
+            >
+              {item.driver1} vs {item.driver2} <small>({item.count})</small>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className='year'>
