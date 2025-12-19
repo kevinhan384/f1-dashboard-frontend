@@ -1,4 +1,4 @@
-import { PureComponent, useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -8,8 +8,10 @@ import DriverDropdown from './DriverDropdown';
 import YearDropdown from './YearDropdown';
 import RaceDropdown from './RaceDropdown';
 
+import GoogleLogin from './GoogleLogin';
+
 function App() {
-  const baseUrl = 'http://127.0.0.1:8000/visualizations/';
+  const baseUrl = 'http://127.0.0.1:8000/api/';
 
   const [driver1, setDriver1] = useState('');
   const [driver2, setDriver2] = useState('');
@@ -26,9 +28,12 @@ function App() {
   const [lap, setLap] = useState(1);
   const [tel, setTel] = useState([]);
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const handleYearSelect = async (e) => {
     setYear(e);
-    axios.get(baseUrl + `races/${e}/`)
+    axios.get(baseUrl + `races/${e}/`, { withCredentials: true })
       .then(response => {
         if (response.data) {
           let obj = JSON.parse(response.data);
@@ -54,7 +59,7 @@ function App() {
 
   const handleRaceSelect = async (e) => {
     setRace(e);
-    axios.get(baseUrl + `drivers/${year}/${e}/`)
+    axios.get(baseUrl + `drivers/${year}/${e}/`, { withCredentials: true })
       .then(response => {
         if (response.data) {
           let obj = JSON.parse(response.data);
@@ -81,10 +86,10 @@ function App() {
   };
 
   const handleLapsButton = async () => {
-    axios.get(baseUrl + `laps/${year}/${race}/${driver1}/${driver2}/`)
+    axios.get(baseUrl + `laps/${year}/${race}/${driver1}/${driver2}/`, { withCredentials: true })
       .then(response => {
         if (response.data) {
-          let data = JSON.parse(response.data);
+          let data = response.data;
 
           setLaps(data['positions']);
           setDriver1Color(data['colorDriver1']);
@@ -98,10 +103,10 @@ function App() {
   }
 
   const handleLapSelect = (e) => {
-    axios.get(baseUrl + `tel/${year}/${race}/${driver1}/${driver2}/${e.activeLabel}/`)
+    axios.get(baseUrl + `telemetry/${year}/${race}/${driver1}/${driver2}/${e.activeLabel}/`, { withCredentials: true })
       .then(response => {
         if (response.data) {
-          let data = JSON.parse(response.data);
+          let data = response.data;
 
           setTel(data['tel']);
           setDriver1Color(data['colorDriver1']);
@@ -114,9 +119,33 @@ function App() {
       });;
   }
 
+  useEffect(() => {
+    // Check if the user is logged in by hitting a simple endpoint
+    // withCredentials ensures the browser sends the session cookie
+    axios.get('http://127.0.0.1:8000/api/selections/', { withCredentials: true })
+      .then(() => {
+        setIsAuthenticated(true);
+        setLoading(false);
+      })
+      .catch(() => {
+        setIsAuthenticated(false);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  if (!isAuthenticated) {
+    return <GoogleLogin />;
+  }
+
   return (
     <div className="App">
       <Header />
+      <button onClick={() => window.location.href = 'http://127.0.0.1:8000/accounts/logout/'}>
+        Logout
+      </button>
+
       <div className='intro'>
         <p>Welcome to F1 Driver Comparison! With this app, you can compare two drivers head-to-head with past statistics and telemetry data.</p>
       </div>
