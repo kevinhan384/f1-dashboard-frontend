@@ -11,7 +11,8 @@ import RaceDropdown from './RaceDropdown';
 import GoogleLogin from './GoogleLogin';
 
 function App() {
-  const baseUrl = 'http://127.0.0.1:8000/api/';
+  // const baseUrl = 'http://127.0.0.1:8000/api/';
+  const baseUrl = 'https://f1-dashboard-api-487290120098.us-central1.run.app/api/';
 
   const [driver1, setDriver1] = useState('');
   const [driver2, setDriver2] = useState('');
@@ -131,7 +132,7 @@ function App() {
   useEffect(() => {
     // Check if the user is logged in by hitting a simple endpoint
     // withCredentials ensures the browser sends the session cookie
-    axios.get('http://127.0.0.1:8000/api/popular/', { withCredentials: true })
+    axios.get('https://f1-dashboard-api-487290120098.us-central1.run.app/api/popular/', { withCredentials: true })
       .then(() => {
         setIsAuthenticated(true);
         setLoading(false);
@@ -144,7 +145,7 @@ function App() {
 
   useEffect(() => {
     // Use 127.0.0.1 to match your auth/CORS settings
-    axios.get('http://127.0.0.1:8000/api/popular/', { withCredentials: true })
+    axios.get('https://f1-dashboard-api-487290120098.us-central1.run.app/api/popular/', { withCredentials: true })
       .then(response => {
         // response.data looks like: 
         // [{driver1: 'HAM', driver2: 'VER', count: 150}, {driver1: 'NOR', driver2: 'PIA', count: 120}]
@@ -162,7 +163,7 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <button onClick={() => window.location.href = 'http://127.0.0.1:8000/accounts/logout/'}>
+      <button onClick={() => window.location.href = 'https://f1-dashboard-api-487290120098.us-central1.run.app/accounts/logout/'}>
         Logout
       </button>
 
